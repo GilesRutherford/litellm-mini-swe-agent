@@ -1,0 +1,29 @@
+name: GitHub Actions Security Analysis
+
+on:
+  push:
+    branches: [main, litellm_internal_staging]
+  pull_request:
+    branches: [main, litellm_internal_staging]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+
+jobs:
+  zizmor:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      - name: Run zizmor
+        uses: zizmorcore/zizmor-action@6fc4b006235f201fdab3722e17240ab420d580e5 # v0.6.1
+        with:
+          advanced-security: "false"
+          annotations: "true"
+          min-severity: medium
